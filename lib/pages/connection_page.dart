@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:luna_upcycling/bindings/mood_light_binding.dart';
 import 'package:luna_upcycling/pages/mood_light.dart';
 import 'package:luna_upcycling/themes/color_palette.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
@@ -41,15 +42,19 @@ class _ConnectionPageState extends State<ConnectionPage> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 "루나 업사이클링",
                 style: title2,
               ),
-              LottieBuilder.asset(
-                'assets/lotties/bulb.json',
-                fit: BoxFit.cover,
+              Container(
+                margin: EdgeInsets.only(bottom: 10),
                 height: 32,
+                child: LottieBuilder.asset(
+                  'assets/lotties/bulbblue.json',
+                  fit: BoxFit.cover,
+                ),
               )
             ],
           ),
@@ -98,11 +103,14 @@ class _ConnectionPageState extends State<ConnectionPage> {
               fit: BoxFit.cover,
             ),
           ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "사용가능 블루투스",
-              style: subtitleRoboto,
+          Padding(
+            padding: const EdgeInsets.only(left: 60.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "사용가능 블루투스",
+                style: subtitleRoboto,
+              ),
             ),
           ),
           Expanded(
@@ -122,12 +130,13 @@ class _ConnectionPageState extends State<ConnectionPage> {
     return GestureDetector(
       onTap: () {
         //연결 성공하면
-        Get.to(() => MoodLightPage());
+        Get.to(() => MoodLightPage(), binding: MoodLightBinding());
       }, // 해당 기기 블루투스 연결
       child: Container(
-        margin: EdgeInsets.symmetric(
-          horizontal: 60,
-          vertical: 10,
+        margin: EdgeInsets.only(
+          right: 60,
+          left: 60,
+          bottom: 20,
         ),
         height: 40,
         decoration: BoxDecoration(

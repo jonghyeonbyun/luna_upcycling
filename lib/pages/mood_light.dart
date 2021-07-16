@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:luna_upcycling/controllers/mood_light_controller.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
 
-class MoodLightPage extends StatelessWidget {
+class MoodLightPage extends GetView<MoodLightController> {
   const MoodLightPage({Key? key}) : super(key: key);
 
   @override
@@ -10,7 +12,7 @@ class MoodLightPage extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     final height = size.height;
     final width = size.width;
-    return Scaffold(
+    return (Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -59,13 +61,21 @@ class MoodLightPage extends StatelessWidget {
               )
             ],
           ),
-          Container(
-            height: height * 0.13,
-            margin: EdgeInsets.all(100),
-            child: LottieBuilder.asset(
-              'assets/lotties/bulb.json',
-              height: height * 0.13,
-              fit: BoxFit.contain,
+          ColorFiltered(
+            colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
+            child: GestureDetector(
+              onDoubleTap: () {
+                print("double taps");
+              },
+              child: Container(
+                height: height * 0.13,
+                margin: EdgeInsets.all(100),
+                child: LottieBuilder.asset(
+                  'assets/lotties/bulb.json',
+                  height: height * 0.13,
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
           ),
           GestureDetector(
@@ -88,6 +98,6 @@ class MoodLightPage extends StatelessWidget {
           )
         ],
       ),
-    );
+    ));
   }
 }

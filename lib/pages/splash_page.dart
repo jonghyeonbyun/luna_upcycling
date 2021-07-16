@@ -3,29 +3,11 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:luna_upcycling/pages/connection_page.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
+import 'package:luna_upcycling/widgets/fade_animation.dart';
+import 'package:simple_animations/simple_animations.dart';
 
-class SplashPage extends StatefulWidget {
+class SplashPage extends StatelessWidget {
   const SplashPage({Key? key}) : super(key: key);
-
-  @override
-  State<SplashPage> createState() => _SplashPageState();
-}
-
-class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
-  late final AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,21 +22,29 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              LottieBuilder.asset(
-                'assets/lotties/bulb.json',
-                fit: BoxFit.cover,
-                height: 70,
+              FadeAnimation(
+                2.0,
+                LottieBuilder.asset(
+                  'assets/lotties/bulbblue.json',
+                  fit: BoxFit.cover,
+                  height: 70,
+                ),
               ),
               Column(
                 children: [
-                  Text(
-                    "루나 업사이클링",
-                    style: title1,
+                  FadeAnimation(
+                    2.2,
+                    Text(
+                      "루나 업사이클링",
+                      style: title1,
+                    ),
                   ),
-                  Text(
-                    "환경을 생각하는 아름다운 코딩",
-                    style: subtitle,
-                  )
+                  FadeAnimation(
+                      2.3,
+                      Text(
+                        ": 환경을 생각하는 아름다운 코딩",
+                        style: subtitle,
+                      ))
                 ],
               ),
               SizedBox(
@@ -67,28 +57,24 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
             child: LottieBuilder.asset(
               'assets/lotties/box.json',
               repeat: false,
-              onLoaded: (composition) {
-                // Configure the AnimationController with the duration of the
-                // Lottie file and start the animation.
-                _controller
-                  ..duration = composition.duration
-                  ..forward();
-              },
               fit: BoxFit.cover,
             ),
           ),
-          GestureDetector(
-            onTap: () => Get.to(() => ConnectionPage()),
-            child: Container(
-              width: width * 0.44,
-              height: 30,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: Color(0xFF0382F7)),
-              child: Center(
-                child: Text(
-                  "시작하기",
-                  style: buttonText,
+          FadeAnimation(
+            2.5,
+            GestureDetector(
+              onTap: () => Get.to(() => ConnectionPage()),
+              child: Container(
+                width: width * 0.44,
+                height: 30,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Color(0xFF0382F7)),
+                child: Center(
+                  child: Text(
+                    "시작하기",
+                    style: buttonText,
+                  ),
                 ),
               ),
             ),
