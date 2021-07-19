@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:luna_upcycling/pages/connection_page.dart';
+import 'package:luna_upcycling/pages/bluetooth_permission.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
 import 'package:luna_upcycling/widgets/fade_animation.dart';
-import 'package:simple_animations/simple_animations.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({Key? key}) : super(key: key);
@@ -63,7 +62,7 @@ class SplashPage extends StatelessWidget {
           FadeAnimation(
             2.5,
             GestureDetector(
-              onTap: () => Get.to(() => ConnectionPage()),
+              onTap: () => Get.to(() => BlueToothPermission()),
               child: Container(
                 width: width * 0.44,
                 height: 30,

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:luna_upcycling/controllers/mood_light_controller.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
 
 class MoodLightPage extends GetView<MoodLightController> {
-  const MoodLightPage({Key? key}) : super(key: key);
+  final BluetoothDevice server;
+
+  MoodLightPage(this.server);
 
   @override
   Widget build(BuildContext context) {

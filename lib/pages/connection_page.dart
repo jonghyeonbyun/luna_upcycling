@@ -2,30 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:luna_upcycling/bindings/mood_light_binding.dart';
+import 'package:luna_upcycling/pages/discovery_page.dart';
 import 'package:luna_upcycling/pages/mood_light.dart';
 import 'package:luna_upcycling/themes/color_palette.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+
+List dummyData = [
+  'arduino 1',
+  'arduino 2',
+  'arduino 3',
+  'arduino 4',
+];
 
 class ConnectionPage extends StatefulWidget {
   const ConnectionPage({Key? key}) : super(key: key);
 
   @override
-  _ConnectionPageState createState() => _ConnectionPageState();
+  State<ConnectionPage> createState() => _ConnectionPageState();
 }
 
-class _ConnectionPageState extends State<ConnectionPage> {
+class _ConnectionPageState extends State<ConnectionPage>
+    with TickerProviderStateMixin {
+  late AnimationController lottieCtl;
   @override
   void initState() {
     super.initState();
-    // 블루투스 연결 시작
+    lottieCtl = AnimationController(vsync: this);
   }
-
-  List dummyData = [
-    'arduino 1',
-    'arduino 2',
-    'arduino 3',
-    'arduino 4',
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +37,10 @@ class _ConnectionPageState extends State<ConnectionPage> {
     final height = size.height;
     final width = size.width;
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+        body: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
           SizedBox(
             height: 100,
           ),
@@ -100,6 +104,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
             height: height * 0.3,
             child: LottieBuilder.asset(
               'assets/lotties/bluetooth.json',
+              controller: lottieCtl,
               fit: BoxFit.cover,
             ),
           ),
@@ -113,51 +118,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
               ),
             ),
           ),
-          Expanded(
-            child: dummyData.length == 0
-                ? waitBT(width, height)
-                : ListView.builder(
-                    itemCount: dummyData.length,
-                    itemBuilder: (context, index) => availableBT(index),
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget availableBT(int index) {
-    return GestureDetector(
-      onTap: () {
-        //연결 성공하면
-        Get.to(() => MoodLightPage(), binding: MoodLightBinding());
-      }, // 해당 기기 블루투스 연결
-      child: Container(
-        margin: EdgeInsets.only(
-          right: 60,
-          left: 60,
-          bottom: 20,
-        ),
-        height: 40,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30), color: lunaGrey),
-        child: Center(child: Text(dummyData[index])),
-      ),
-    );
-  }
-
-  Widget waitBT(double width, double height) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: 4,
-        itemBuilder: (context, index) => Container(
-          width: width * 0.6,
-          height: 31,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              color: Color(0xffCED4DA)),
-        ),
-      ),
-    );
+          Expanded(child: DiscoveryPage())
+        ]));
   }
 }
