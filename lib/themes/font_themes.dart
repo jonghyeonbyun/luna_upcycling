@@ -33,3 +33,8 @@ final buttonText = GoogleFonts.notoSans(
   color: Colors.white,
   fontSize: 15,
 );
+final whiteButtonText = GoogleFonts.notoSans(
+  fontWeight: FontWeight.bold,
+  color: Colors.black,
+  fontSize: 15,
+);

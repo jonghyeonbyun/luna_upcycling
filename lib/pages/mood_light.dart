@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:luna_upcycling/controllers/mood_light_controller.dart';
+import 'package:luna_upcycling/pages/light_color_pick.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
 
 class MoodLightPage extends GetView<MoodLightController> {
@@ -79,9 +80,7 @@ class MoodLightPage extends GetView<MoodLightController> {
             ),
           ),
           GestureDetector(
-            onTap: () {
-              // 색 고르기 pop up
-            },
+            onTap: () => Get.off(() => LightColorPickPage()),
             child: Container(
               width: width * 0.44,
               height: 30,
