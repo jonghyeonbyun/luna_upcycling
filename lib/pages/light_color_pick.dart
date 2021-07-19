@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart' as CustomColorPicker;
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart'
+    as CustomColorPicker;
 import 'package:get/get.dart';
 import 'package:luna_upcycling/bindings/mood_light_binding.dart';
 import 'package:luna_upcycling/pages/mood_light.dart';
@@ -8,7 +10,9 @@ import 'package:luna_upcycling/themes/color_palette.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
 
 class LightColorPickPage extends StatefulWidget {
-  const LightColorPickPage({Key? key}) : super(key: key);
+  final BluetoothDevice server;
+
+  const LightColorPickPage({Key? key, required this.server}) : super(key: key);
 
   @override
   _LightColorPickPageState createState() => _LightColorPickPageState();
@@ -18,7 +22,8 @@ class _LightColorPickPageState extends State<LightColorPickPage> {
   Color choiceColor = lunaBlue;
   Color backgroundColor = Colors.white;
 
-  void changeColor(Color color) => setState(() => choiceColor = backgroundColor = color);
+  void changeColor(Color color) =>
+      setState(() => choiceColor = backgroundColor = color);
 
   @override
   void initState() {
@@ -106,8 +111,7 @@ class _LightColorPickPageState extends State<LightColorPickPage> {
                       blurRadius: 10,
                       offset: Offset(0, 3),
                     )
-                  ]
-              ),
+                  ]),
               child: Center(
                 child: Text(
                   "사용자 지정 색상",
@@ -121,7 +125,8 @@ class _LightColorPickPageState extends State<LightColorPickPage> {
           ),
           GestureDetector(
             onTap: () {
-              Get.off(() => MoodLightPage(), binding: MoodLightBinding(), arguments: choiceColor);
+              Get.off(() => MoodLightPage(server: widget.server),
+                  binding: MoodLightBinding(), arguments: choiceColor);
             },
             child: Container(
               width: width * 0.44,

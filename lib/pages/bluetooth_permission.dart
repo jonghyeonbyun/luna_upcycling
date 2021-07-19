@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:luna_upcycling/pages/connection_page.dart';
 import 'package:luna_upcycling/pages/discovery_page.dart';
 
 class BlueToothPermission extends StatelessWidget {

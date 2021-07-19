@@ -29,12 +29,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  fluttertoast: ^8.0.7
+
   get:
   lottie:
   google_fonts: ^2.1.0
   flutter_bluetooth_serial: ^0.3.2
   simple_animations: ^1.3.3
-
+  flex_color_picker:
+  flutter_colorpicker:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2

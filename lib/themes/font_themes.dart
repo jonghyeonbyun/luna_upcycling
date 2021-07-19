@@ -21,12 +21,12 @@ final subtitleRoboto = GoogleFonts.notoSans(
 final title2 = TextStyle(
   fontFamily: 'SeoulHangangEB',
   color: lunaBlack,
-  fontSize: 22,
+  fontSize: 26,
 );
 final descrip = GoogleFonts.notoSans(
   fontWeight: FontWeight.w500,
   color: lunaBlack,
-  fontSize: 11,
+  fontSize: 13,
 );
 final buttonText = GoogleFonts.notoSans(
   fontWeight: FontWeight.bold,

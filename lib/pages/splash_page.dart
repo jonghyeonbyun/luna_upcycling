@@ -65,7 +65,7 @@ class SplashPage extends StatelessWidget {
               onTap: () => Get.to(() => BlueToothPermission()),
               child: Container(
                 width: width * 0.44,
-                height: 30,
+                height: 35,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     color: Color(0xFF0382F7)),

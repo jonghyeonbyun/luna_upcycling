@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:luna_upcycling/pages/mood_light.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:luna_upcycling/widgets/BluetoothDeviceListEntry.dart';
 
@@ -24,13 +25,11 @@ class _DiscoveryPage extends State<DiscoveryPage>
   List<BluetoothDiscoveryResult> results =
       List<BluetoothDiscoveryResult>.empty(growable: true);
   bool isDiscovering = false;
-  late AnimationController btAnimationCtl;
   _DiscoveryPage();
 
   @override
   void initState() {
     super.initState();
-    btAnimationCtl = AnimationController(vsync: this);
     isDiscovering = widget.start;
     if (isDiscovering) {
       _startDiscovery();
@@ -38,7 +37,6 @@ class _DiscoveryPage extends State<DiscoveryPage>
   }
 
   void _restartDiscovery() {
-    btAnimationCtl.forward();
     setState(() {
       results.clear();
       isDiscovering = true;
@@ -63,8 +61,6 @@ class _DiscoveryPage extends State<DiscoveryPage>
     _streamSubscription!.onDone(() {
       setState(() {
         isDiscovering = false;
-        btAnimationCtl.stop();
-        print("끝!");
       });
     });
   }
@@ -159,19 +155,13 @@ class _DiscoveryPage extends State<DiscoveryPage>
               height: height * 0.3,
               child: LottieBuilder.asset(
                 'assets/lotties/bluetooth.json',
-                controller: btAnimationCtl,
                 fit: BoxFit.cover,
-                onLoaded: (comp) {
-                  btAnimationCtl
-                    ..duration = comp.duration
-                    ..forward()
-                    ..repeat();
-                },
+                repeat: true,
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 60.0),
+            padding: const EdgeInsets.only(left: 50.0),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -192,19 +182,41 @@ class _DiscoveryPage extends State<DiscoveryPage>
                   return BluetoothDeviceListEntry(
                     device: device,
                     rssi: result.rssi,
-                    onTap: () async {
+                    onTap: () {
+                      Get.to(() => MoodLightPage(server: result.device));
+                    },
+                    onLongPress: () async {
                       try {
                         bool bonded = false;
                         if (device.isBonded) {
-                          Get.to(() => MoodLightPage(device));
-                          //     print('Unbonding from ${device.address}...');
-                          //     await FlutterBluetoothSerial.instance
-                          //         .removeDeviceBondWithAddress(address);
+                          print('Unbonding from ${device.address}...');
+                          await FlutterBluetoothSerial.instance
+                              .removeDeviceBondWithAddress(address);
                           print('Unbonding from ${device.address} has succed');
                         } else {
                           print('Bonding with ${device.address}...');
                           bonded = (await FlutterBluetoothSerial.instance
                               .bondDeviceAtAddress(address))!;
+                          if (bonded) {
+                            Get.to(() => MoodLightPage(server: device));
+                            Fluttertoast.showToast(
+                                msg: "연결 성공!!",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.green,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: "연결 실패 ㅠ",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                          }
                           print(
                               'Bonding with ${device.address} has ${bonded ? 'succed' : 'failed'}.');
                         }
