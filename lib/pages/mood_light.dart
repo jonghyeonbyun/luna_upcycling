@@ -4,12 +4,15 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:luna_upcycling/pages/discovery_page.dart';
+import 'package:luna_upcycling/themes/color_palette.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
 
 import 'light_color_pick.dart';
+import 'loading.dart';
 
 class MoodLightPage extends StatefulWidget {
   final BluetoothDevice server;
@@ -35,17 +38,24 @@ class _MoodLightPage extends State<MoodLightPage> {
   bool get isConnected => (connection?.isConnected ?? false);
 
   bool isDisconnecting = false;
+  bool bulbState = false;
+  Color? bulbColor;
 
   @override
   void initState() {
     super.initState();
+    bulbState = false;
+    bulbColor = Get.arguments;
+    print(bulbColor.toString());
 
     BluetoothConnection.toAddress(widget.server.address).then((_connection) {
       print('Connected to the device');
       connection = _connection;
+
       setState(() {
         isConnecting = false;
         isDisconnecting = false;
+        _sendMessage(bulbColor.toString());
       });
 
       connection!.input!.listen(_onDataReceived).onDone(() {
@@ -57,7 +67,9 @@ class _MoodLightPage extends State<MoodLightPage> {
         // If we didn't except this (no flag set), it means closing by remote.
         if (isDisconnecting) {
           print('Disconnecting locally!');
+          Fluttertoast.showToast(msg: "연결을 끊었습니다.");
         } else {
+          Fluttertoast.showToast(msg: "연결이 끊어졌습니다.");
           print('Disconnected remotely!');
         }
         if (this.mounted) {
@@ -65,9 +77,12 @@ class _MoodLightPage extends State<MoodLightPage> {
         }
       });
     }).catchError((error) {
+      Get.snackbar("오류", error.message,
+          colorText: Colors.white,
+          backgroundColor: lunaBlue,
+          margin: EdgeInsets.all(16),
+          snackPosition: SnackPosition.BOTTOM);
       print('Cannot connect, exception occured');
-      Get.offAll(() => DiscoveryPage());
-      print(error);
     });
   }
 
@@ -143,94 +158,98 @@ class _MoodLightPage extends State<MoodLightPage> {
     final height = size.height;
     final width = size.width;
     return (Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Chapter 1. 무드등",
-            style: title2,
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          Column(
-            children: [
-              Row(
+        body: !isConnecting
+            ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 2,
-                    color: Color(0xFF0382F7),
-                    height: 11,
+                  Text(
+                    "Chapter 1. 무드등",
+                    style: title2,
                   ),
                   SizedBox(
-                    width: 5,
+                    height: 30,
                   ),
-                  Text(
-                    "이중 탭을 하여 무드등을 끄고 킬 수 있습니다.",
-                    style: descrip,
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 2,
-                    color: Color(0xFF0382F7),
-                    height: 11,
+                  Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 2,
+                            color: Color(0xFF0382F7),
+                            height: 11,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            "이중 탭을 하여 무드등을 끄고 킬 수 있습니다.",
+                            style: descrip,
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 2,
+                            color: Color(0xFF0382F7),
+                            height: 11,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            "다양한 색상을 선택하여 적용할 수 있습니다.",
+                            style: descrip,
+                          )
+                        ],
+                      )
+                    ],
                   ),
-                  SizedBox(
-                    width: 5,
+                  ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                        bulbColor ?? Color(0xffdee2e6), BlendMode.modulate),
+                    child: GestureDetector(
+                      onDoubleTap: () {
+                        print("double taps");
+                        _sendMessage(bulbState ? "off" : "on");
+                        bulbState = !bulbState;
+                        Fluttertoast.showToast(msg: bulbState ? "on" : "off");
+                      },
+                      child: Container(
+                        height: height * 0.13,
+                        margin: EdgeInsets.all(100),
+                        child: LottieBuilder.asset(
+                          'assets/lotties/bulb.json',
+                          height: height * 0.13,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
                   ),
-                  Text(
-                    "다양한 색상을 선택하여 적용할 수 있습니다.",
-                    style: descrip,
+                  GestureDetector(
+                    onTap: () => Get.off(
+                        () => LightColorPickPage(
+                              server: widget.server,
+                            ),
+                        arguments: widget.server),
+                    child: Container(
+                      width: width * 0.44,
+                      height: 35,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Color(0xFF0382F7)),
+                      child: Center(
+                        child: Text(
+                          "색 고르기",
+                          style: buttonText,
+                        ),
+                      ),
+                    ),
                   )
                 ],
               )
-            ],
-          ),
-          ColorFiltered(
-            colorFilter: ColorFilter.mode(
-                Get.arguments ?? Colors.grey, BlendMode.modulate),
-            child: GestureDetector(
-              onDoubleTap: () {
-                print("double taps");
-              },
-              child: Container(
-                height: height * 0.13,
-                margin: EdgeInsets.all(100),
-                child: LottieBuilder.asset(
-                  'assets/lotties/bulb.json',
-                  height: height * 0.13,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () => Get.off(
-                () => LightColorPickPage(
-                      server: widget.server,
-                    ),
-                arguments: widget.server),
-            child: Container(
-              width: width * 0.44,
-              height: 35,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: Color(0xFF0382F7)),
-              child: Center(
-                child: Text(
-                  "색 고르기",
-                  style: buttonText,
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-    ));
+            : Loading()));
   }
 }

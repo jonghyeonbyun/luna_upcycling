@@ -5,6 +5,7 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:luna_upcycling/pages/mood_light.dart';
+import 'package:luna_upcycling/themes/color_palette.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -13,6 +14,7 @@ import 'package:luna_upcycling/widgets/BluetoothDeviceListEntry.dart';
 class DiscoveryPage extends StatefulWidget {
   /// If true, discovery starts on page start, otherwise user must press action button.
   final bool start;
+
   DiscoveryPage({this.start = true});
 
   @override
@@ -30,6 +32,7 @@ class _DiscoveryPage extends State<DiscoveryPage>
   @override
   void initState() {
     super.initState();
+
     isDiscovering = widget.start;
     if (isDiscovering) {
       _startDiscovery();
@@ -60,7 +63,13 @@ class _DiscoveryPage extends State<DiscoveryPage>
 
     _streamSubscription!.onDone(() {
       setState(() {
+        print("onDone");
         isDiscovering = false;
+        Get.snackbar("검색 중지", "다시 검색하려면 블루투스 아이콘을 누르세요",
+            colorText: Colors.white,
+            backgroundColor: lunaBlue,
+            margin: EdgeInsets.all(16),
+            snackPosition: SnackPosition.BOTTOM);
       });
     });
   }
@@ -148,6 +157,7 @@ class _DiscoveryPage extends State<DiscoveryPage>
           GestureDetector(
             onTap: () {
               if (!isDiscovering) {
+                Fluttertoast.showToast(msg: "다시 검색중 ...");
                 _restartDiscovery();
               }
             },
@@ -198,7 +208,8 @@ class _DiscoveryPage extends State<DiscoveryPage>
                           bonded = (await FlutterBluetoothSerial.instance
                               .bondDeviceAtAddress(address))!;
                           if (bonded) {
-                            Get.to(() => MoodLightPage(server: device));
+                            Get.to(() => MoodLightPage(server: device),
+                                arguments: Color(0xfff));
                             Fluttertoast.showToast(
                                 msg: "연결 성공!!",
                                 toastLength: Toast.LENGTH_SHORT,
