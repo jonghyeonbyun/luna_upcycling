@@ -18,9 +18,7 @@ class BlueToothPermission extends StatelessWidget {
             ),
           );
         } else {
-          return LightColorPickPage(
-            server: BluetoothDevice(address: ""),
-          );
+          return DiscoveryPage();
         }
       },
     );
