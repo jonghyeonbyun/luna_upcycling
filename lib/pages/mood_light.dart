@@ -45,8 +45,7 @@ class _MoodLightPage extends State<MoodLightPage> {
   void initState() {
     super.initState();
     bulbState = false;
-    bulbColor = Get.arguments;
-    print(bulbColor.toString());
+    Color bulbColor = Get.arguments ?? lunaBlue;
 
     BluetoothConnection.toAddress(widget.server.address).then((_connection) {
       print('Connected to the device');
@@ -76,12 +75,10 @@ class _MoodLightPage extends State<MoodLightPage> {
           setState(() {});
         }
       });
-    }).catchError((error) {
-      Get.snackbar("오류", error.message,
-          colorText: Colors.white,
-          backgroundColor: lunaBlue,
-          margin: EdgeInsets.all(16),
-          snackPosition: SnackPosition.BOTTOM);
+    }).catchError((error) async {
+      await Future.delayed(Duration(seconds: 1));
+      Fluttertoast.showToast(msg: "연결 실패");
+      Get.offAll(DiscoveryPage());
       print('Cannot connect, exception occured');
     });
   }

@@ -22,7 +22,7 @@ class Loading extends StatelessWidget {
           FadeAnimation(
             5,
             GestureDetector(
-              onTap: () => Get.to(DiscoveryPage()),
+              onTap: () => Get.back(),
               child: Container(
                 width: 200,
                 height: 35,

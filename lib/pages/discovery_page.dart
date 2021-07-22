@@ -65,11 +65,6 @@ class _DiscoveryPage extends State<DiscoveryPage>
       setState(() {
         print("onDone");
         isDiscovering = false;
-        Get.snackbar("검색 중지", "다시 검색하려면 블루투스 아이콘을 누르세요",
-            colorText: Colors.white,
-            backgroundColor: lunaBlue,
-            margin: EdgeInsets.all(16),
-            snackPosition: SnackPosition.BOTTOM);
       });
     });
   }
@@ -120,10 +115,14 @@ class _DiscoveryPage extends State<DiscoveryPage>
             height: 30,
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    width: width * 0.2,
+                  ),
                   Container(
                     width: 2,
                     color: Color(0xFF0382F7),
@@ -133,14 +132,17 @@ class _DiscoveryPage extends State<DiscoveryPage>
                     width: 5,
                   ),
                   Text(
-                    "아두이노는 보통 HGD214i 로 시작합니다.",
+                    "검색이 안되면 블루투스 아이콘을 눌러주세요.",
                     style: descrip,
                   )
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    width: width * 0.2,
+                  ),
                   Container(
                     width: 2,
                     color: Color(0xFF0382F7),
@@ -149,7 +151,7 @@ class _DiscoveryPage extends State<DiscoveryPage>
                   SizedBox(
                     width: 5,
                   ),
-                  Text("해당 기기를 선택하여 연결하고 연결합니다.", style: descrip)
+                  Text("해당 기기를 선택하여 페어링합니다.", style: descrip)
                 ],
               )
             ],

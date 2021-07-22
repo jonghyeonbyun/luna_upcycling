@@ -23,6 +23,11 @@ final title2 = TextStyle(
   color: lunaBlack,
   fontSize: 26,
 );
+final liteSHtext = TextStyle(
+  fontFamily: 'SeoulHangangL',
+  color: lunaBlack,
+  fontSize: 13,
+);
 final descrip = GoogleFonts.notoSans(
   fontWeight: FontWeight.w500,
   color: lunaBlack,

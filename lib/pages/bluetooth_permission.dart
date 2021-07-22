@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:luna_upcycling/pages/discovery_page.dart';
+import 'package:luna_upcycling/pages/light_color_pick.dart';
 
 class BlueToothPermission extends StatelessWidget {
   const BlueToothPermission({Key? key}) : super(key: key);
@@ -17,7 +18,9 @@ class BlueToothPermission extends StatelessWidget {
             ),
           );
         } else {
-          return DiscoveryPage();
+          return LightColorPickPage(
+            server: BluetoothDevice(address: ""),
+          );
         }
       },
     );

@@ -49,8 +49,14 @@ class _LightColorPickPageState extends State<LightColorPickPage> {
             child: Padding(
               padding: const EdgeInsets.all(30),
               child: Card(
-                elevation: 2,
+                shadowColor: Colors.black38,
+                elevation: 5,
                 child: ColorPicker(
+                  pickerTypeLabels: {
+                    ColorPickerType.primary: "기본",
+                    ColorPickerType.accent: "강조",
+                  },
+                  pickerTypeTextStyle: liteSHtext,
                   // Use the screenPickerColor as start color.
                   color: choiceColor,
                   // Update the screenPickerColor using the callback.
@@ -60,12 +66,13 @@ class _LightColorPickPageState extends State<LightColorPickPage> {
                   borderRadius: 16,
                   heading: Text(
                     '색 지정하기',
-                    style: Theme.of(context).textTheme.headline5,
+                    style: title1,
                   ),
                   subheading: Text(
                     '색 채도 조절',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: subtitle,
                   ),
+                  columnSpacing: 15,
                 ),
               ),
             ),
@@ -100,16 +107,15 @@ class _LightColorPickPageState extends State<LightColorPickPage> {
             },
             child: Container(
               width: width * 0.44,
-              height: 40,
+              height: 35,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
                   color: Color(0xFFFFFFFF),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: lunaBlack.withOpacity(0.1),
                       spreadRadius: 4,
                       blurRadius: 10,
-                      offset: Offset(0, 3),
                     )
                   ]),
               child: Center(
@@ -121,7 +127,7 @@ class _LightColorPickPageState extends State<LightColorPickPage> {
             ),
           ),
           SizedBox(
-            height: height * 0.17,
+            height: height * 0.1,
           ),
           GestureDetector(
             onTap: () {
