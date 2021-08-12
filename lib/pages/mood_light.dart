@@ -16,8 +16,7 @@ import 'loading.dart';
 
 class MoodLightPage extends StatefulWidget {
   final BluetoothDevice server;
-
-  const MoodLightPage({required this.server});
+  const MoodLightPage({required this.server,});
 
   @override
   _MoodLightPage createState() => new _MoodLightPage();
@@ -30,7 +29,10 @@ class _Message {
   _Message(this.whom, this.text);
 }
 
-class _MoodLightPage extends State<MoodLightPage> {
+class _MoodLightPage extends State<MoodLightPage> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   BluetoothConnection? connection;
   String _messageBuffer = '';
 
@@ -39,13 +41,15 @@ class _MoodLightPage extends State<MoodLightPage> {
 
   bool isDisconnecting = false;
   bool bulbState = false;
-  Color? bulbColor;
+
+  Color? bulbColor = Get.arguments ?? lunaBlue;
+
 
   @override
   void initState() {
     super.initState();
+
     bulbState = false;
-    Color bulbColor = Get.arguments ?? lunaBlue;
 
     BluetoothConnection.toAddress(widget.server.address).then((_connection) {
       print('Connected to the device');
@@ -54,16 +58,10 @@ class _MoodLightPage extends State<MoodLightPage> {
       setState(() {
         isConnecting = false;
         isDisconnecting = false;
-        _sendMessage(bulbColor.toString());
+        _sendMessage(bulbColor!.value.toString());
       });
 
       connection!.input!.listen(_onDataReceived).onDone(() {
-        // Example: Detect which side closed the connection
-        // There should be `isDisconnecting` flag to show are we are (locally)
-        // in middle of disconnecting process, should be set before calling
-        // `dispose`, `finish` or `close`, which all causes to disconnect.
-        // If we except the disconnection, `onDone` should be fired as result.
-        // If we didn't except this (no flag set), it means closing by remote.
         if (isDisconnecting) {
           print('Disconnecting locally!');
           Fluttertoast.showToast(msg: "연결을 끊었습니다.");
@@ -82,7 +80,6 @@ class _MoodLightPage extends State<MoodLightPage> {
       print('Cannot connect, exception occured');
     });
   }
-
   @override
   void dispose() {
     // Avoid memory leak (`setState` after dispose) and disconnect
@@ -94,7 +91,6 @@ class _MoodLightPage extends State<MoodLightPage> {
 
     super.dispose();
   }
-
   void _onDataReceived(Uint8List data) {
     // Allocate buffer for parsed data
     int backspacesCounter = 0;
@@ -154,8 +150,10 @@ class _MoodLightPage extends State<MoodLightPage> {
     Size size = MediaQuery.of(context).size;
     final height = size.height;
     final width = size.width;
+    super.build(context);
+
     return (Scaffold(
-        body: !isConnecting
+        body: isConnecting
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

@@ -18,7 +18,10 @@ class LightColorPickPage extends StatefulWidget {
   _LightColorPickPageState createState() => _LightColorPickPageState();
 }
 
-class _LightColorPickPageState extends State<LightColorPickPage> {
+class _LightColorPickPageState extends State<LightColorPickPage> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   Color choiceColor = lunaBlue;
   Color backgroundColor = Colors.white;
 
@@ -35,6 +38,8 @@ class _LightColorPickPageState extends State<LightColorPickPage> {
     Size size = MediaQuery.of(context).size;
     final height = size.height;
     final width = size.width;
+    super.build(context);
+
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Column(

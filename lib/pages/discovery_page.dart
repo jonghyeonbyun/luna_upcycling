@@ -158,10 +158,10 @@ class _DiscoveryPage extends State<DiscoveryPage>
           ),
           GestureDetector(
             onTap: () {
-              if (!isDiscovering) {
+
                 Fluttertoast.showToast(msg: "다시 검색중 ...");
                 _restartDiscovery();
-              }
+
             },
             child: Container(
               height: height * 0.3,

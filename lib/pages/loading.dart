@@ -11,36 +11,7 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: (Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(),
-          SizedBox(
-            height: 60,
-          ),
-          FadeAnimation(
-            5,
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Container(
-                width: 200,
-                height: 35,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                          color: lunaBlue, blurRadius: 10, spreadRadius: 0)
-                    ]),
-                child: Center(
-                    child:
-                        Text("다른 기기와 연결하기", style: otherConnectionButtonText)),
-              ),
-            ),
-          )
-        ],
-      )),
+      child: (CircularProgressIndicator()),
     );
   }
 }
