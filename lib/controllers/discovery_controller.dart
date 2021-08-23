@@ -23,7 +23,6 @@ class DiscoveryController extends GetxController {
       results.clear();
       isDiscovering.value = true;
       _streamSubscription.cancel();
-
     _startDiscovery();
   }
 

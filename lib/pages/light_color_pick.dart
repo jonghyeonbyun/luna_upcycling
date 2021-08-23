@@ -4,11 +4,14 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart'
     as CustomColorPicker;
 import 'package:get/get.dart';
+import 'package:luna_upcycling/bindings/discovery_binding.dart';
 import 'package:luna_upcycling/bindings/mood_light_binding.dart';
 import 'package:luna_upcycling/controllers/mood_light_controller.dart';
 import 'package:luna_upcycling/pages/mood_light.dart';
 import 'package:luna_upcycling/themes/color_palette.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
+
+import 'discovery_page.dart';
 
 
 class LightColorPickPage extends GetView<MoodLightController> {
@@ -119,7 +122,7 @@ class LightColorPickPage extends GetView<MoodLightController> {
           GestureDetector(
             onTap: () {
               controller.isColorPicker.value = false;
-              controller.sendMessage(controller.bulbColor.value.toString());
+              controller.sendMessage("${controller.bulbColor.value.red} ${controller.bulbColor.value.green} ${controller.bulbColor.value.blue} ");
             },
             child: Container(
               width: width * 0.44,

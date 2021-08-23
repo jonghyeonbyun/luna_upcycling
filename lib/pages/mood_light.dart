@@ -7,6 +7,7 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:luna_upcycling/bindings/discovery_binding.dart';
 import 'package:luna_upcycling/controllers/mood_light_controller.dart';
 import 'package:luna_upcycling/pages/discovery_page.dart';
 import 'package:luna_upcycling/themes/color_palette.dart';
@@ -29,8 +30,14 @@ class MoodLightPage extends GetView<MoodLightController> {
     Size size = MediaQuery.of(context).size;
     final height = size.height;
     final width = size.width;
-    return Scaffold(
-      body: Obx(()=> controller.isConnecting.value ? Loading() : (controller.isColorPicker.value ? LightColorPickPage() : LightMain(height, width)))
+    return WillPopScope(
+      onWillPop: () async {
+        print("will pop");
+        return await controller.willpopstate(true);
+      },
+      child: Scaffold(
+        body: Obx(()=> !controller.isConnecting.value ? Loading() : (controller.isColorPicker.value ? LightColorPickPage() : LightMain(height, width)))
+      ),
     );
   }
 
@@ -107,8 +114,8 @@ class MoodLightPage extends GetView<MoodLightController> {
         GestureDetector(
           onTap: () {
             controller.isColorPicker(true);
-            print("클릭");
-            print(controller.isColorPicker);
+           // print("클릭");
+           // print(controller.isColorPicker);
     },
     child: Container(
 

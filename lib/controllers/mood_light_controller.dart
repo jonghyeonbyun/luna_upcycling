@@ -23,6 +23,7 @@ class MoodLightController extends GetxController {
   bool bulbState = false;
   final backgroundColor = Colors.white.obs;
   final bulbColor = lunaBlue.obs;
+  final willpopstate = false.obs;
 
 
   @override
@@ -34,8 +35,6 @@ class MoodLightController extends GetxController {
     BluetoothConnection.toAddress(server.address).then((_connection) {
       print('Connected to the device');
       connection = _connection;
-
-
         isConnecting.value = false;
         isDisconnecting = false;
         sendMessage(bulbColor.value.toString());
@@ -50,12 +49,16 @@ class MoodLightController extends GetxController {
         }
       });
     }).catchError((error) async {
-      await Future.delayed(Duration(seconds: 1));
-      Fluttertoast.showToast(msg: "연결 실패");
-      Get.offAll(DiscoveryPage(), binding: DiscoveryBinding());
-      print('Cannot connect, exception occured');
+      await Future.delayed(Duration(seconds: 30));
+      if(!willpopstate.value){
+        Fluttertoast.showToast(msg: "연결 실패");
+        Get.offAll(DiscoveryPage(), binding: DiscoveryBinding());
+        print('Cannot connect, exception occured');
+
+      }else print("out from willpop");
     });
   }
+
   @override
   void onClose() {
     // Avoid memory leak (`setState` after dispose) and disconnect
@@ -108,12 +111,15 @@ class MoodLightController extends GetxController {
 
   void sendMessage(String text) async {
     text = text.trim();
+    print(text);
+
     if (text.length > 0) {
       try {
         connection!.output.add(Uint8List.fromList(utf8.encode(text + "\r\n")));
         await connection!.output.allSent;
       } catch (e) {
         // Ignore error, but notify state
+        print("전송실패");
       }
     }
   }
