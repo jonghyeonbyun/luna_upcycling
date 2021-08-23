@@ -5,43 +5,25 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart'
     as CustomColorPicker;
 import 'package:get/get.dart';
 import 'package:luna_upcycling/bindings/mood_light_binding.dart';
+import 'package:luna_upcycling/controllers/mood_light_controller.dart';
 import 'package:luna_upcycling/pages/mood_light.dart';
 import 'package:luna_upcycling/themes/color_palette.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
 
-class LightColorPickPage extends StatefulWidget {
-  final BluetoothDevice server;
 
-  const LightColorPickPage({Key? key, required this.server}) : super(key: key);
-
-  @override
-  _LightColorPickPageState createState() => _LightColorPickPageState();
-}
-
-class _LightColorPickPageState extends State<LightColorPickPage> with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
-  Color choiceColor = lunaBlue;
-  Color backgroundColor = Colors.white;
+class LightColorPickPage extends GetView<MoodLightController> {
 
   void changeColor(Color color) =>
-      setState(() => choiceColor = backgroundColor = color);
-
-  @override
-  void initState() {
-    super.initState();
-  }
+       controller.bulbColor.value = controller.backgroundColor.value = color;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     final height = size.height;
     final width = size.width;
-    super.build(context);
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: controller.backgroundColor.value,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -63,7 +45,7 @@ class _LightColorPickPageState extends State<LightColorPickPage> with AutomaticK
                   },
                   pickerTypeTextStyle: liteSHtext,
                   // Use the screenPickerColor as start color.
-                  color: choiceColor,
+                  color: controller.bulbColor.value,
                   // Update the screenPickerColor using the callback.
                   onColorChanged: (Color color) => changeColor(color),
                   width: 33,
@@ -92,7 +74,7 @@ class _LightColorPickPageState extends State<LightColorPickPage> with AutomaticK
                     contentPadding: const EdgeInsets.all(0.0),
                     content: SingleChildScrollView(
                       child: CustomColorPicker.ColorPicker(
-                        pickerColor: choiceColor,
+                        pickerColor: controller.bulbColor.value,
                         onColorChanged: changeColor,
                         colorPickerWidth: 300.0,
                         pickerAreaHeightPercent: 0.7,
@@ -136,8 +118,8 @@ class _LightColorPickPageState extends State<LightColorPickPage> with AutomaticK
           ),
           GestureDetector(
             onTap: () {
-              Get.off(() => MoodLightPage(server: widget.server),
-                  binding: MoodLightBinding(), arguments: choiceColor);
+              controller.isColorPicker.value = false;
+              controller.sendMessage(controller.bulbColor.value.toString());
             },
             child: Container(
               width: width * 0.44,

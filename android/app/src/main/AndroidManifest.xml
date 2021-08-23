@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.luna_upcycling">
+    package="com.luna.luna_upcycling">
    <application
         android:label="루나 업사이클링"
         android:icon="@mipmap/ic_launcher">

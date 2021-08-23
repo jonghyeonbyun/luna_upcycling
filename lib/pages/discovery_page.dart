@@ -1,9 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:luna_upcycling/bindings/mood_light_binding.dart';
+import 'package:luna_upcycling/controllers/discovery_controller.dart';
 import 'package:luna_upcycling/pages/mood_light.dart';
 import 'package:luna_upcycling/themes/color_palette.dart';
 import 'package:luna_upcycling/themes/font_themes.dart';
@@ -11,79 +11,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:luna_upcycling/widgets/BluetoothDeviceListEntry.dart';
 
-class DiscoveryPage extends StatefulWidget {
-  /// If true, discovery starts on page start, otherwise user must press action button.
-  final bool start;
-
-  DiscoveryPage({this.start = true});
-
-  @override
-  _DiscoveryPage createState() => new _DiscoveryPage();
-}
-
-class _DiscoveryPage extends State<DiscoveryPage>
-    with TickerProviderStateMixin {
-  StreamSubscription<BluetoothDiscoveryResult>? _streamSubscription;
-  List<BluetoothDiscoveryResult> results =
-      List<BluetoothDiscoveryResult>.empty(growable: true);
-  bool isDiscovering = false;
-  _DiscoveryPage();
-
-  @override
-  void initState() {
-    super.initState();
-
-    isDiscovering = widget.start;
-    if (isDiscovering) {
-      _startDiscovery();
-    }
-  }
-
-  void _restartDiscovery() {
-    setState(() {
-      results.clear();
-      isDiscovering = true;
-    });
-
-    _startDiscovery();
-  }
-
-  void _startDiscovery() {
-    _streamSubscription =
-        FlutterBluetoothSerial.instance.startDiscovery().listen((r) {
-      setState(() {
-        final existingIndex = results.indexWhere(
-            (element) => element.device.address == r.device.address);
-        if (existingIndex >= 0)
-          results[existingIndex] = r;
-        else
-          results.add(r);
-      });
-    });
-
-    _streamSubscription!.onDone(() {
-      setState(() {
-        print("onDone");
-        isDiscovering = false;
-      });
-    });
-  }
-
-  // @TODO . One day there should be `_pairDevice` on long tap on something... ;)
-
-  @override
-  void dispose() {
-    // Avoid memory leak (`setState` after dispose) and cancel discovery
-    _streamSubscription?.cancel();
-
-    super.dispose();
-  }
-
+class DiscoveryPage extends GetView<DiscoveryController> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     final height = size.height;
     final width = size.width;
+    Get.put(DiscoveryController());
 
     return Scaffold(
         body: Column(
@@ -158,10 +92,8 @@ class _DiscoveryPage extends State<DiscoveryPage>
           ),
           GestureDetector(
             onTap: () {
-
-                Fluttertoast.showToast(msg: "다시 검색중 ...");
-                _restartDiscovery();
-
+              Fluttertoast.showToast(msg: "다시 검색중 ...");
+              controller.restartDiscovery();
             },
             child: Container(
               height: height * 0.3,
@@ -185,20 +117,20 @@ class _DiscoveryPage extends State<DiscoveryPage>
           Expanded(
               child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 40),
-            child: ListView.builder(
-                itemCount: results.length,
+            child: Obx(()=>ListView.builder(
+                itemCount: controller.results.length ,
                 itemBuilder: (BuildContext context, index) {
-                  BluetoothDiscoveryResult result = results[index];
+                  BluetoothDiscoveryResult result = controller.results[index];
                   final device = result.device;
                   final address = device.address;
                   return BluetoothDeviceListEntry(
                     device: device,
                     rssi: result.rssi,
                     onTap: () {
-                      Get.to(() => MoodLightPage(server: result.device));
+                      Get.to(() => MoodLightPage(),
+                          arguments: {'color': Color(0xffdee2e6), 'server':device },binding: MoodLightBinding());
                     },
                     onLongPress: () async {
-                      try {
                         bool bonded = false;
                         if (device.isBonded) {
                           print('Unbonding from ${device.address}...');
@@ -210,8 +142,8 @@ class _DiscoveryPage extends State<DiscoveryPage>
                           bonded = (await FlutterBluetoothSerial.instance
                               .bondDeviceAtAddress(address))!;
                           if (bonded) {
-                            Get.to(() => MoodLightPage(server: device),
-                                arguments: Color(0xfff));
+                            Get.to(() => MoodLightPage(),
+                                arguments: {'color': Color(0xffdee2e6), 'server':device }, binding: MoodLightBinding());
                             Fluttertoast.showToast(
                                 msg: "연결 성공!!",
                                 toastLength: Toast.LENGTH_SHORT,
@@ -233,41 +165,20 @@ class _DiscoveryPage extends State<DiscoveryPage>
                           print(
                               'Bonding with ${device.address} has ${bonded ? 'succed' : 'failed'}.');
                         }
-                        setState(() {
-                          results[results.indexOf(result)] =
-                              BluetoothDiscoveryResult(
-                                  device: BluetoothDevice(
-                                    name: device.name ?? '',
-                                    address: address,
-                                    type: device.type,
-                                    bondState: bonded
-                                        ? BluetoothBondState.bonded
-                                        : BluetoothBondState.none,
-                                  ),
-                                  rssi: result.rssi);
-                        });
-                      } catch (ex) {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Error occured while bonding'),
-                              content: Text("${ex.toString()}"),
-                              actions: <Widget>[
-                                new TextButton(
-                                  child: new Text("닫기"),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
+                        controller.results[controller.results.indexOf(result)] =
+                            BluetoothDiscoveryResult(
+                                device: BluetoothDevice(
+                                  name: device.name ?? '',
+                                  address: address,
+                                  type: device.type,
+                                  bondState: bonded
+                                      ? BluetoothBondState.bonded
+                                      : BluetoothBondState.none,
                                 ),
-                              ],
-                            );
-                          },
-                        );
-                      }
+                                rssi: result.rssi);
                     },
                   );
-                }),
+                }),)
           ))
         ]));
   }
