@@ -122,6 +122,9 @@ class LightColorPickPage extends GetView<MoodLightController> {
           GestureDetector(
             onTap: () {
               controller.isColorPicker.value = false;
+              if(!controller.bulbState){
+                controller.sendMessage("on");
+              }
               controller.sendMessage("color ${controller.bulbColor.value.red} ${controller.bulbColor.value.green} ${controller.bulbColor.value.blue} ");
             },
             child: Container(

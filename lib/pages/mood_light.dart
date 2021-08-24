@@ -19,7 +19,6 @@ import '../widgets/loading.dart';
 class _Message {
   int whom;
   String text;
-
   _Message(this.whom, this.text);
 }
 
@@ -36,7 +35,7 @@ class MoodLightPage extends GetView<MoodLightController> {
         return await controller.willpopstate(true);
       },
       child: Scaffold(
-        body: Obx(()=> !controller.isConnecting.value ? Loading() : (controller.isColorPicker.value ? LightColorPickPage() : LightMain(height, width)))
+        body: Obx(()=> controller.isConnecting.value ? Loading() : (controller.isColorPicker.value ? LightColorPickPage() : LightMain(height, width)))
       ),
     );
   }
@@ -100,8 +99,7 @@ class MoodLightPage extends GetView<MoodLightController> {
               controller.bulbState = !controller.bulbState;
               Fluttertoast.showToast(msg: controller.bulbState ? "on" : "off");
               controller.sendMessage("${controller.bulbState}");
-              controller.sendMessage("color ${controller.bulbColor.value.red} ${controller.bulbColor.value.green} ${controller.bulbColor.value.blue} ");
-
+              if(controller.bulbState) controller.sendMessage("color ${controller.bulbColor.value.red} ${controller.bulbColor.value.green} ${controller.bulbColor.value.blue} ");
             },
             child: Container(
               height: height * 0.13,
@@ -121,7 +119,6 @@ class MoodLightPage extends GetView<MoodLightController> {
            // print(controller.isColorPicker);
     },
     child: Container(
-
             width: width * 0.44,
             height: 35,
             decoration: BoxDecoration(
