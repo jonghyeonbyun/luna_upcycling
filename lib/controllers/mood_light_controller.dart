@@ -37,7 +37,6 @@ class MoodLightController extends GetxController {
       connection = _connection;
         isConnecting.value = false;
         isDisconnecting = false;
-        sendMessage(bulbColor.value.toString());
 
       connection!.input!.listen(_onDataReceived).onDone(() {
         if (isDisconnecting) {

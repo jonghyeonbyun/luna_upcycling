@@ -99,6 +99,9 @@ class MoodLightPage extends GetView<MoodLightController> {
               controller.sendMessage(controller.bulbState ? "off" : "on");
               controller.bulbState = !controller.bulbState;
               Fluttertoast.showToast(msg: controller.bulbState ? "on" : "off");
+              controller.sendMessage("${controller.bulbState}");
+              controller.sendMessage("color ${controller.bulbColor.value.red} ${controller.bulbColor.value.green} ${controller.bulbColor.value.blue} ");
+
             },
             child: Container(
               height: height * 0.13,
